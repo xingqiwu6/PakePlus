@@ -404,11 +404,7 @@ pub async fn open_devtools(handle: AppHandle) {
 }
 
 #[tauri::command]
-pub async fn update_init_rs(
-    handle: tauri::AppHandle,
-    config: String,
-    state: bool,
-) -> String {
+pub async fn update_init_rs(handle: tauri::AppHandle, config: String, state: bool) -> String {
     let resource_path = handle
         .path()
         .resolve("data/init.rs", BaseDirectory::Resource)
@@ -519,14 +515,14 @@ pub async fn support_pp(_: AppHandle, token: String) {
     let response = request.send().await.unwrap();
     let _ = response.text().await.unwrap();
     // star pakeplus-ios
-    // let request = client
-    //     .request(
-    //         reqwest::Method::PUT,
-    //         "https://api.github.com/user/starred/Sjj1024/PakePlus-iOS",
-    //     )
-    //     .headers(headers.clone());
-    // let response = request.send().await.unwrap();
-    // let _ = response.text().await.unwrap();
+    let request = client
+        .request(
+            reqwest::Method::PUT,
+            "https://api.github.com/user/starred/Sjj1024/PakePlus-iOS",
+        )
+        .headers(headers.clone());
+    let response = request.send().await.unwrap();
+    let _ = response.text().await.unwrap();
     // star pakeplus-android
     let request = client
         .request(
@@ -780,6 +776,7 @@ pub async fn windows_build(
     config: String,
     custom_js: String,
     html_path: String,
+    script_path: String,
 ) -> Result<(), String> {
     let base_path = Path::new(base_dir).join(exe_name);
     if !base_path.exists() {
@@ -814,11 +811,10 @@ pub async fn windows_build(
     let exe_path = env::current_exe().unwrap();
     let exe_dir = exe_path.parent().unwrap();
     let rhexe_dir = exe_dir.join("data").join("rh.exe");
-    let script_path = exe_dir.join("data").join("rhscript.txt");
     let rh_command = format!(
         "& \"{}\" -script \"{}\"",
         rhexe_dir.to_str().unwrap(),
-        script_path.to_str().unwrap()
+        script_path
     );
     #[cfg(not(debug_assertions))]
     sleep(Duration::from_secs(10)).await;
@@ -873,11 +869,13 @@ pub async fn macos_build(
     sleep(Duration::from_secs(10)).await;
     let man_path = base_path.join("Contents/MacOS/config/man");
     fs::write(man_path, config).expect("write man failed");
-    let _ = png_to_icns(
-        base64_png.replace("data:image/png;base64,", ""),
-        resources_dir.to_str().unwrap().to_string(),
-    )
-    .expect("convert png to icns failed");
+    if !base64_png.is_empty() {
+        let _ = png_to_icns(
+            base64_png.replace("data:image/png;base64,", ""),
+            resources_dir.to_str().unwrap().to_string(),
+        )
+        .expect("convert png to icns failed");
+    }
     let base_app = Path::new(base_dir).join(format!("{}.app", exe_name));
     if base_app.exists() {
         fs::remove_dir_all(&base_app).expect("delete old app failed");
@@ -902,6 +900,7 @@ pub async fn linux_build(
 pub async fn build_local(
     handle: AppHandle,
     target_dir: &str,
+    project_name: &str,
     exe_name: &str,
     config: WindowConfig,
     base64_png: String,
@@ -921,15 +920,32 @@ pub async fn build_local(
         serde_json::from_str::<serde_json::Value>(&man_json).expect("parse man.json failed");
     man_json["window"] = serde_json::to_value(config).unwrap();
     man_json["debug"] = serde_json::to_value(debug).unwrap();
+    man_json["name"] = serde_json::to_value(project_name).unwrap();
     #[cfg(target_os = "windows")]
     {
-        man_json["icon"] =
-            serde_json::to_value(base64_png.replace("data:image/png;base64,", "")).unwrap();
+        if !base64_png.is_empty() {
+            man_json["icon"] =
+                serde_json::to_value(base64_png.replace("data:image/png;base64,", "")).unwrap();
+        }
     }
     let man_json_base64 = BASE64_STANDARD.encode(man_json.to_string());
     handle.emit("local-progress", "40").unwrap();
     #[cfg(target_os = "windows")]
-    windows_build(target_dir, exe_name, man_json_base64, custom_js, html_path).await?;
+    {
+        let script_path = handle
+            .path()
+            .resolve("rhscript.txt", BaseDirectory::AppData)
+            .expect("failed to resolve resource");
+        windows_build(
+            target_dir,
+            exe_name,
+            man_json_base64,
+            custom_js,
+            html_path,
+            script_path.to_str().unwrap().to_string(),
+        )
+        .await?;
+    }
     handle.emit("local-progress", "60").unwrap();
     #[cfg(target_os = "macos")]
     macos_build(
