@@ -182,7 +182,10 @@
                 <!-- api/template -->
                 <div v-if="menuIndex === '0-1'" class="cardContent">
                     <h1 class="cardTitle">my info</h1>
-                    <p>Get Github information.</p>
+                    <p>
+                        Get Github information.（id:
+                        {{ creatDeviceid() }}）
+                    </p>
                     <div class="cardBox">
                         <el-tooltip
                             content="Github discount amount"
@@ -579,8 +582,106 @@
                             content="Set the window icon."
                             placement="bottom"
                         >
-                            <el-button @click="setWindowIcon">
+                            <el-button @click="windowFunc('setIcon')">
                                 setIcon
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="Set the window title."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('setTitle')">
+                                setTitle
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="Maximize the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('maximize')">
+                                maximize
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="Unmaximize the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('unmaximize')">
+                                unmaximize
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="Toggle maximize the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('toggleMaximize')">
+                                toggleMaximize
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="minimize the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('minimize')">
+                                minimize
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="unminimize the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('unminimize')">
+                                unminimize
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="show the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('show')">
+                                show
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="destroy the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('destroy')">
+                                destroy
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="onCloseRequested the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('onCloseRequested')">
+                                onCloseRequested
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="onThemeChanged the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('onThemeChanged')">
+                                onThemeChanged
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="setClosable(true) the window."
+                            placement="bottom"
+                        >
+                            <el-button @click="windowFunc('setClosable(true)')">
+                                setClosable(true)
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            content="setClosable(false) the window."
+                            placement="bottom"
+                        >
+                            <el-button
+                                @click="windowFunc('setClosable(false)')"
+                            >
+                                setClosable(false)
                             </el-button>
                         </el-tooltip>
                         <el-tooltip content="base64 to ico" placement="bottom">
@@ -821,7 +922,8 @@
                     <h1 class="cardTitle">notification</h1>
                     <p>
                         Send native notifications to your user using the
-                        notification plugin.
+                        notification plugin. Please allow notification function
+                        in system settings
                     </p>
                     <div class="cardBox">
                         <el-tooltip
@@ -832,6 +934,15 @@
                                 {{ t('sendMessageNotification') }}
                             </el-button>
                         </el-tooltip>
+                    </div>
+                    <div class="codeDemo">
+                        <h2>发送通知</h2>
+                        <p class="description">调用系统通知API发送消息通知</p>
+                        <CodeEdit
+                            lang="javascript"
+                            :code="Codes.notification.trim()"
+                            :disabled="true"
+                        />
                     </div>
                 </div>
                 <!-- api/opener -->
@@ -984,19 +1095,21 @@
                             content="disable right click"
                             placement="bottom"
                         >
-                            <el-button>全局禁止右键</el-button>
+                            <el-button
+                                @click="executeCode(Codes.disRightClick)"
+                            >
+                                全局禁止右键
+                            </el-button>
                         </el-tooltip>
                         <el-tooltip
                             content="allow some right click"
                             placement="bottom"
                         >
-                            <el-button>允许部分右键</el-button>
-                        </el-tooltip>
-                        <el-tooltip
-                            content="enable right click"
-                            placement="bottom"
-                        >
-                            <el-button>允许右键</el-button>
+                            <el-button
+                                @click="executeCode(Codes.inputRightClick)"
+                            >
+                                允许部分右键
+                            </el-button>
                         </el-tooltip>
                     </div>
                     <div class="codeDemo">
@@ -1049,6 +1162,24 @@
                         <p class="description">
                             {{ t('autoOperationDesc') }}
                         </p>
+                    </div>
+                    <div class="codeDemo">
+                        <h2>全局禁止右键</h2>
+                        <p class="description">全局禁止右键</p>
+                        <CodeEdit
+                            lang="javascript"
+                            :code="Codes.disRightClick.trim()"
+                            :disabled="true"
+                        />
+                    </div>
+                    <div class="codeDemo">
+                        <h2>允许部分右键</h2>
+                        <p class="description">允许输入框或文本域部分右键</p>
+                        <CodeEdit
+                            lang="javascript"
+                            :code="Codes.inputRightClick.trim()"
+                            :disabled="true"
+                        />
                     </div>
                 </div>
                 <!-- api/listenData -->
@@ -1178,6 +1309,7 @@ import {
     yunPaySignKey,
     zPayMchId,
     zPaySignKey,
+    creatDeviceid,
 } from '@/utils/common'
 import About from '@/pages/about.vue'
 import {
@@ -1187,7 +1319,21 @@ import {
     Setting,
 } from '@element-plus/icons-vue'
 import { ArrowLeft } from '@element-plus/icons-vue'
-import { getCurrentWindow } from '@tauri-apps/api/window'
+import {
+    Window,
+    CloseRequestedEvent,
+    getCurrentWindow,
+    getAllWindows,
+    UserAttentionType,
+    Effect,
+    EffectState,
+    currentMonitor,
+    monitorFromPoint,
+    primaryMonitor,
+    availableMonitors,
+    cursorPosition,
+    ProgressBarStatus,
+} from '@tauri-apps/api/window'
 import {
     defaultWindowIcon,
     getName,
@@ -1209,6 +1355,7 @@ import {
     LogicalSize,
     PhysicalSize,
     PhysicalPosition,
+    Size,
 } from '@tauri-apps/api/dpi'
 import { emit, emitTo, listen, once } from '@tauri-apps/api/event'
 import {
@@ -1266,7 +1413,6 @@ import {
     getAllWebviews,
 } from '@tauri-apps/api/webview'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
-import { Window } from '@tauri-apps/api/window'
 import { useI18n } from 'vue-i18n'
 import payApi from '@/apis/pay'
 import githubApi from '@/apis/github'
@@ -1284,6 +1430,7 @@ import {
     version,
 } from '@tauri-apps/plugin-os'
 import http from '@/utils/http'
+import { confirm } from '@tauri-apps/plugin-dialog'
 import { readFile, writeFile } from '@tauri-apps/plugin-fs'
 import { usePPStore } from '@/store'
 
@@ -1492,15 +1639,368 @@ const osApis = async (func: string) => {
     }
 }
 
-// seticon
-const setWindowIcon = async () => {
-    const selected: any = await openSelect(false, [])
-    console.log('selected', selected)
-    if (selected) {
-        await getCurrentWindow().setIcon(selected)
-        oneMessage.success(t('setWindowIconSuccess'))
-    } else {
-        oneMessage.error(t('selectWindowIcon'))
+// window api
+const windowFunc = async (func: string) => {
+    const currentWin = getCurrentWindow()
+    switch (func) {
+        case 'setIcon':
+            const selected: any = await openSelect(false, [])
+            console.log('selected', selected)
+            if (selected) {
+                currentWin.setIcon(selected)
+                oneMessage.success(t('windowFuncSuccess'))
+            } else {
+                oneMessage.error(t('selectWindowIcon'))
+            }
+            break
+        case 'setTitle':
+            if (textarea.value) {
+                await currentWin.setTitle(textarea.value)
+                oneMessage.success('设置标题成功')
+            } else {
+                oneMessage.error('请输入标题')
+            }
+            break
+        case 'maximize':
+            await currentWin.maximize()
+            oneMessage.success('最大化成功')
+            break
+        case 'unmaximize':
+            await currentWin.unmaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'toggleMaximize':
+            await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'minimize':
+            await currentWin.minimize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'unminimize':
+            await currentWin.unminimize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'show':
+            await currentWin.show()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'destroy':
+            await currentWin.destroy()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setDecorations(true)':
+            await currentWin.setDecorations(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setShadow(true)':
+            await currentWin.setShadow(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setShadow(false)':
+            await currentWin.setShadow(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setAlwaysOnTop(true)':
+            await currentWin.setAlwaysOnTop(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setAlwaysOnTop(false)':
+            await currentWin.setAlwaysOnTop(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setAlwaysOnBottom(false)':
+            await currentWin.setAlwaysOnBottom(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setAlwaysOnBottom(true)':
+            await currentWin.setAlwaysOnBottom(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setContentProtected':
+            await currentWin.setContentProtected(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setSize':
+            // await currentWin.setSize(new Size(LogicalSize()))
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setMinSize':
+            // await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setMaxSize':
+            // await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setPosition':
+            // await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setFullscreen(true)':
+            await currentWin.setFullscreen(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setFullscreen(false)':
+            await currentWin.setFullscreen(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setFocus':
+            await currentWin.setFocus()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setSkipTaskbar(false)':
+            await currentWin.setSkipTaskbar(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setSkipTaskbar(true)':
+            await currentWin.setSkipTaskbar(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setCursorGrab(true)':
+            await currentWin.setCursorGrab(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setCursorGrab(false)':
+            await currentWin.setCursorVisible(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setCursorVisible(true)':
+            await currentWin.setCursorVisible(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setCursorIcon':
+            // await currentWin.setCursorIcon()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setBackgroundColor':
+            // await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setCursorPosition':
+            // await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setIgnoreCursorEvents':
+            await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setBadgeCount':
+            await currentWin.setBadgeCount(6)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setBadgeLabel':
+            await currentWin.setBadgeLabel('hi')
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setOverlayIcon':
+            // await currentWin.toggleMaximize()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setProgressBar':
+            await currentWin.setProgressBar({
+                status: ProgressBarStatus.Normal,
+                progress: 50,
+            })
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setVisibleOnAllWorkspaces':
+            await currentWin.setVisibleOnAllWorkspaces(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'onResized':
+            await currentWin.onResized(({ payload: size }) => {
+                console.log('size', size)
+                oneMessage.success('监听大小变化')
+            })
+            break
+        case 'onMoved':
+            await currentWin.onMoved(({ payload: position }) => {
+                console.log('position', position)
+                oneMessage.success('监听移动')
+            })
+            break
+        case 'onCloseRequested':
+            await currentWin.onCloseRequested(async (event) => {
+                console.log('user close requested')
+                event.preventDefault()
+            })
+            oneMessage.success('onCloseRequested')
+            break
+        case 'onDragDropEvent':
+            const unlisten = await getCurrentWindow().onDragDropEvent(
+                (event) => {
+                    if (event.payload.type === 'over') {
+                        console.log('User hovering', event.payload.position)
+                    } else if (event.payload.type === 'drop') {
+                        console.log('User dropped', event.payload.paths)
+                    } else {
+                        console.log('File drop cancelled')
+                    }
+                }
+            )
+            oneMessage.success('取消最大化成功')
+            break
+        case 'onFocusChanged':
+            const unlistenFocus = currentWin.onFocusChanged(
+                ({ payload: focused }) => {
+                    console.log('Focus changed, window is focused? ' + focused)
+                }
+            )
+            oneMessage.success('取消最大化成功')
+            break
+        case 'onScaleChanged':
+            const unlistenScale = currentWin.onScaleChanged(({ payload }) => {
+                console.log('Scale changed', payload.scaleFactor, payload.size)
+            })
+            oneMessage.success('取消最大化成功')
+            break
+        case 'onThemeChanged':
+            const unlistenTheme = currentWin.onThemeChanged(
+                ({ payload: theme }) => {
+                    console.log('New theme: ' + theme)
+                }
+            )
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setClosable(true)':
+            await currentWin.setClosable(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setClosable(false)':
+            await currentWin.setClosable(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setMinimizable(true)':
+            await currentWin.setMinimizable(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setMinimizable(false)':
+            await currentWin.setMinimizable(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setMaximizable(true)':
+            await currentWin.setMaximizable(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setMaximizable(false)':
+            await currentWin.setMaximizable(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'isEnabled':
+            const isEnabled = await currentWin.isEnabled()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setEnabled(true)':
+            await currentWin.setEnabled(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setEnabled(false)':
+            await currentWin.setEnabled(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setResizable(true)':
+            await currentWin.setResizable(true)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'setResizable(false)':
+            await currentWin.setResizable(false)
+            oneMessage.success('取消最大化成功')
+            break
+        case 'center':
+            await currentWin.center()
+            oneMessage.success('取消最大化成功')
+            break
+        case 'isAlwaysOnTop':
+            const isOnTop = await currentWin.isAlwaysOnTop()
+            console.log('isAlwaysOnTop', isOnTop)
+            break
+        case 'theme':
+            const themeStr = await currentWin.theme()
+            console.log('themeStr', themeStr)
+            break
+        case 'title':
+            const titleStr = await currentWin.title()
+            console.log('titleStr', titleStr)
+            break
+        case 'isVisible':
+            const isVisibleBool = await currentWin.isVisible()
+            console.log('titleStr', isVisibleBool)
+            break
+        case 'isClosable':
+            const isClosableBool = await currentWin.isClosable()
+            console.log('isClosable', isClosableBool)
+            break
+        case 'isMinimizable':
+            const isMinimizableBool = await currentWin.isMinimizable()
+            console.log('isMinimizableBool', isMinimizableBool)
+            break
+        case 'isMaximizable':
+            const isMaximizableBool = await currentWin.isMaximizable()
+            console.log('isMaximizable', isMaximizableBool)
+            break
+        case 'isResizable':
+            const isResizableBool = await currentWin.isResizable()
+            console.log('isResizable', isResizableBool)
+            break
+        case 'isDecorated':
+            const isDecoratedBool = await currentWin.isDecorated()
+            console.log('isDecoratedBool', isDecoratedBool)
+            break
+        case 'isFocused':
+            const isFocusedBool = await currentWin.isFocused()
+            console.log('isFocusedBool', isFocusedBool)
+            break
+        case 'isMaximized':
+            const isMaximizedBool = await currentWin.isMaximized()
+            console.log('isDecoratedBool', isMaximizedBool)
+            break
+        case 'isMinimized':
+            const isMinimizedBool = await currentWin.isMinimized()
+            console.log('isMinimizedBool', isMinimizedBool)
+            break
+        case 'isFullscreen':
+            const isFullscreenBool = await currentWin.isFullscreen()
+            console.log('isFullscreenBool', isFullscreenBool)
+            break
+        case 'outerSize':
+            const outerSizeObj = await currentWin.outerSize()
+            console.log('isDecoratedBool', outerSizeObj)
+            break
+        case 'innerSize':
+            const innerSizeObj = await currentWin.innerSize()
+            console.log('innerSizeObj', innerSizeObj)
+            break
+        case 'outerPosition':
+            const outerPositionObj = await currentWin.outerPosition()
+            console.log('outerPositionObj', outerPositionObj)
+            break
+        case 'innerPosition':
+            const innerPositionObj = await currentWin.innerPosition()
+            console.log('innerPositionObj', innerPositionObj)
+            break
+        case 'scaleFactor':
+            const scaleFactor = await currentWin.scaleFactor()
+            console.log('scaleFactor', scaleFactor)
+            break
+        case 'emitTo':
+            // const isDecoratedBool = await currentWin.isDecorated()
+            console.log('isDecoratedBool')
+            break
+        case 'emit':
+            // const isDecoratedBool = await currentWin.isDecorated()
+            console.log('isDecoratedBool')
+            break
+        case 'once':
+            // const isDecoratedBool = await currentWin.isDecorated()
+            console.log('isDecoratedBool')
+            break
+        case 'listen':
+            // const isDecoratedBool = await currentWin.isDecorated()
+            console.log('isDecoratedBool')
+            break
+        default:
+            break
     }
 }
 
@@ -2055,6 +2555,15 @@ listen('download_progress', (event: any) => {
         ((event.payload.downloaded / event.payload.total) * 100).toFixed(2)
     )
 })
+
+// execute code
+const executeCode = (code: string) => {
+    try {
+        eval(code)
+    } catch (error) {
+        console.error('execute code error', error)
+    }
+}
 
 onMounted(() => {
     if (isTauri()) {

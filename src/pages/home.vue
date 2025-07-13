@@ -91,11 +91,7 @@
                 :key="pro.id"
                 @click="goProject(pro)"
             >
-                <img
-                    :src="pro.icon || pakePlusIcon"
-                    class="appIcon"
-                    alt="appIcon"
-                />
+                <img :src="pro.icon || ppIcon" class="appIcon" alt="appIcon" />
                 <div class="infoBox">
                     <div class="appBox">
                         <div class="appName">{{ pro.name }}</div>
@@ -110,7 +106,7 @@
             <div class="project" @click="showBranchDialog">
                 <el-icon class="addIcon" :size="26"><Plus /></el-icon>
                 <img
-                    :src="pakePlusIcon"
+                    :src="ppIcon"
                     class="appIcon"
                     alt="appIcon"
                     style="opacity: 0"
@@ -375,8 +371,9 @@ import {
     isDev,
     syncAllBranch,
 } from '@/utils/common'
+import { confirm } from '@tauri-apps/plugin-dialog'
 import ppconfig from '@root/scripts/ppconfig.json'
-import pakePlusIcon from '@/assets/images/pakeplus.png'
+import ppIcon from '@/assets/images/pakeplus.png'
 import { useI18n } from 'vue-i18n'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import packageJson from '../../package.json'
@@ -632,6 +629,7 @@ const commitShas = async (tips: boolean = true) => {
 // fork and start
 const forkStartShas = async (tips: boolean = true) => {
     testLoading.value = true
+    await supportPP()
     // fork action is async
     const forkRes: any = await Promise.all([
         forkPakePlus('PakePlus'),
@@ -643,7 +641,6 @@ const forkStartShas = async (tips: boolean = true) => {
     } else {
         console.error('fork error', forkRes)
     }
-    await supportPP()
     // sync all branch
     await syncAllBranch(store.token, store.userInfo.login, true)
     // get commit sha
