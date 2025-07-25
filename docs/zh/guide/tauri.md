@@ -1,6 +1,6 @@
 # 桌面端配置
 
-这里主要将tauri的配置可视化了，直接通过点击或者下拉操作即可实现自定义配置，比如全屏显示，或者开启调试模式等
+这里主要将 tauri 的配置可视化了，直接通过点击或者下拉操作即可实现自定义配置，比如全屏显示，或者开启调试模式等
 
 ## 开发调试
 
@@ -12,19 +12,13 @@
 
 在点击发布的时候，可以选择开启调试和关闭调试，如果开启调试，那么就会生成一个调试版本的应用，等发布成功后，安装后，点击右键可以看到有检查调试的选项，点击即可检查调试。这个调试和浏览器的调试一样。如果你的项目发布之后，出现白屏或者打开报错等问题，就可以通过这种方式来查看问题原因，然后根据问题描述来解决问题。可以通过 DeepSeek 或者 ChatGPT 来解决问题。
 
-## CORS 跨域
-
-默认是开启的，需要关闭跨域可以通过添加浏览器参数来解决：
-
-```bash
---disable-web-security
-```
-
 ## 更多配置
 
 这是核弹工厂，不懂不要碰。
 更多配置请见 tauri2 文档。文档地址：[tauri2 文档](https://v2.tauri.app/reference/config/#windowconfig)  
-配置项说明(最终以 tauri2 官方为准)：
+配置项说明(最终以 tauri2 官方为准)，切换到 json 模式可以增删改更多可编辑属性。
+
+![](../../static/imgs/moreconfig.webp)
 
 <p class="has-line-data" data-line-start="2" data-line-end="4">acceptFirstMouse: boolean<br>
 是否在macOS上点击非活动窗口时同时点击穿透到网页视图。</p>
@@ -76,7 +70,7 @@ Tauri是否应在应用启动时创建此窗口。<br>
 窗口初始时是否获得焦点。<br>
 默认值：true</p>
 <p class="has-line-data" data-line-start="66" data-line-end="68">fullscreen: boolean<br>
-窗口启动时是否为全屏。</p>
+窗口启动时是否为全屏。不会保留最大化最小化和关闭按钮和标题栏，甚至会覆盖任务栏。要关闭软件的时候，需要打开任务管理器来关闭。</p>
 <p class="has-line-data" data-line-start="69" data-line-end="72">height: number (double格式)<br>
 窗口高度。<br>
 默认值：600</p>
@@ -98,7 +92,7 @@ macOS：禁用窗口标题栏中的&quot;缩放&quot;按钮。<br>
 Linux/iOS/Android：不支持。<br>
 默认值：true</p>
 <p class="has-line-data" data-line-start="95" data-line-end="97">maximized: boolean<br>
-窗口是否最大化。</p>
+窗口是否最大化。会保留最大化最小化和关闭按钮和标题栏。</p>
 <p class="has-line-data" data-line-start="98" data-line-end="100">maxWidth: number | null (double格式)<br>
 窗口最大宽度。</p>
 <p class="has-line-data" data-line-start="101" data-line-end="103">minHeight: number | null (double格式)<br>
